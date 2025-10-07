@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Loader2, CheckCircle, XCircle, Clock, MessageSquare } from 'lucide-react';
 import { generateMessage } from '../utils/aiProviders';
 import { sendSMS } from '../utils/twilioSender';
@@ -8,6 +8,7 @@ function CampaignProgress({ campaign, onComplete }) {
   const [phoneStatuses, setPhoneStatuses] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
+  const processingRef = useRef(false); // Prevent double execution
 
   useEffect(() => {
     // Initialize phone statuses
@@ -21,8 +22,8 @@ function CampaignProgress({ campaign, onComplete }) {
   }, [campaign.phoneNumbers]);
 
   useEffect(() => {
-    if (!isRunning || currentIndex >= campaign.phoneNumbers.length) {
-      if (currentIndex >= campaign.phoneNumbers.length) {
+    if (!isRunning || currentIndex >= campaign.phoneNumbers.length || processingRef.current) {
+      if (currentIndex >= campaign.phoneNumbers.length && !processingRef.current) {
         setIsRunning(false);
         setTimeout(() => {
           onComplete();
@@ -32,6 +33,9 @@ function CampaignProgress({ campaign, onComplete }) {
     }
 
     const processNextNumber = async () => {
+      // Prevent double execution
+      if (processingRef.current) return;
+      processingRef.current = true;
       const phoneNumber = campaign.phoneNumbers[currentIndex];
       
       // Update status to processing
@@ -89,6 +93,7 @@ function CampaignProgress({ campaign, onComplete }) {
         // Wait a bit before processing next number (to avoid rate limits)
         await new Promise(resolve => setTimeout(resolve, 1000));
         
+        processingRef.current = false; // Reset flag
         setCurrentIndex(prev => prev + 1);
       } catch (error) {
         console.error('Error processing number:', error);
@@ -115,6 +120,7 @@ function CampaignProgress({ campaign, onComplete }) {
         });
 
         await new Promise(resolve => setTimeout(resolve, 1000));
+        processingRef.current = false; // Reset flag
         setCurrentIndex(prev => prev + 1);
       }
     };

@@ -12,8 +12,9 @@ function MyAgents() {
     loadAgents();
   }, []);
 
-  const loadAgents = () => {
-    setAgents(getAgents());
+  const loadAgents = async () => {
+    const agentsList = await getAgents();
+    setAgents(agentsList);
   };
 
   const handleCreateNew = () => {
@@ -26,9 +27,9 @@ function MyAgents() {
     setShowEditor(true);
   };
 
-  const handleDelete = (agentId) => {
+  const handleDelete = async (agentId) => {
     if (confirm('Are you sure you want to delete this agent template?')) {
-      deleteAgent(agentId);
+      await deleteAgent(agentId);
       loadAgents();
     }
   };

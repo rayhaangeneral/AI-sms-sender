@@ -19,14 +19,19 @@ function AgentEditor({ agent, onSave, onCancel }) {
     }
   }, [agent]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.model || !formData.messagePrompt) {
       alert('Please fill in all required fields');
       return;
     }
-    saveAgent(formData);
-    onSave();
+    try {
+      await saveAgent(formData);
+      onSave();
+    } catch (error) {
+      console.error('Error saving agent:', error);
+      alert('Failed to save agent. Please try again.');
+    }
   };
 
   const handleFileUpload = async (e) => {

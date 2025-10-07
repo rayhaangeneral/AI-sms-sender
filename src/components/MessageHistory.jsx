@@ -23,15 +23,15 @@ function MessageHistory() {
     }
   }, [searchTerm, messages]);
 
-  const loadMessages = () => {
-    const history = getMessageHistory();
+  const loadMessages = async () => {
+    const history = await getMessageHistory();
     setMessages(history);
     setFilteredMessages(history);
   };
 
-  const handleClearHistory = () => {
+  const handleClearHistory = async () => {
     if (confirm('Are you sure you want to clear all message history? This cannot be undone.')) {
-      clearMessageHistory();
+      await clearMessageHistory();
       loadMessages();
     }
   };

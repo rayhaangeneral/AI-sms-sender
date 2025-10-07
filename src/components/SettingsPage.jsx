@@ -12,16 +12,31 @@ function SettingsPage() {
     twilio: { accountSid: '', authToken: '', phoneNumber: '' }
   });
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const keys = getApiKeys();
-    setApiKeys(keys);
+    const loadKeys = async () => {
+      try {
+        const keys = await getApiKeys();
+        setApiKeys(keys);
+      } catch (error) {
+        console.error('Error loading API keys:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadKeys();
   }, []);
 
-  const handleSave = () => {
-    saveApiKeys(apiKeys);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+  const handleSave = async () => {
+    try {
+      await saveApiKeys(apiKeys);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      console.error('Error saving API keys:', error);
+      alert('Failed to save API keys. Please try again.');
+    }
   };
 
   const updateField = (provider, field, value) => {

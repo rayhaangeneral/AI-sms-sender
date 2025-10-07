@@ -2,55 +2,81 @@
 
 A powerful web application that allows you to build, manage, and deploy AI-powered SMS campaigns. Connect to multiple AI providers (Groq, OpenAI, Ollama, Anthropic, OpenRouter) and send personalized SMS messages through Twilio.
 
+## ✨ New Features (v2.0)
+
+🔐 **User Authentication with Supabase**
+- Secure login and signup
+- User-specific data isolation
+- Session management
+- Password-based authentication
+
+☁️ **Cloud Storage**
+- API keys stored in Supabase (per user)
+- Agent templates synced to cloud
+- Message history backed up
+- LocalStorage fallback for offline use
+
 ## Features
 
 ✅ **Multiple AI Provider Support**
-- Groq
+- Groq (Recommended - Fast & Free)
 - OpenAI
 - Ollama (self-hosted)
 - Anthropic
 - OpenRouter
+
+✅ **User Authentication**
+- Secure signup and login
+- Session persistence
+- User-specific data
+- Easy logout
 
 ✅ **Agent Template Management**
 - Create reusable agent templates
 - Configure persona (Sales/Support)
 - Upload knowledge base documents (.txt, .pdf)
 - Edit and delete templates
+- Cloud sync across devices
 
 ✅ **Campaign Management**
 - Launch campaigns from templates or create one-off campaigns
-- Sequential SMS delivery
+- Sequential SMS delivery (no duplicate messages)
 - Real-time campaign progress monitoring
 - Multi-language support (English, Hindi, Arabic)
+- Robust error handling
 
 ✅ **Message History**
 - Complete message log with search functionality
 - View sent/failed status
 - Filter by phone number or content
 - Campaign statistics
+- Cloud backup
 
-✅ **Local Storage**
-- No database required
-- All data stored in browser localStorage
-- API keys stored securely in browser
-- Complete privacy - no data leaves your device
+✅ **Hybrid Storage**
+- Cloud storage via Supabase
+- LocalStorage fallback
+- Automatic sync when online
+- Privacy-focused (API keys not encrypted for testing)
 
 ## Prerequisites
 
 Before you begin, ensure you have:
 
 1. **Node.js** (v16 or higher) - [Download here](https://nodejs.org/)
-2. **API Keys** for at least one AI provider:
-   - [Groq API Key](https://console.groq.com/)
+2. **Supabase Account** (Free) - [Sign up here](https://supabase.com)
+3. **API Keys** for at least one AI provider:
+   - [Groq API Key](https://console.groq.com/) - **Recommended for free tier**
    - [OpenAI API Key](https://platform.openai.com/api-keys)
    - [Anthropic API Key](https://console.anthropic.com/)
    - [OpenRouter API Key](https://openrouter.ai/)
    - Ollama (for self-hosted models)
-3. **Twilio Account**:
+4. **Twilio Account**:
    - [Sign up for Twilio](https://www.twilio.com/try-twilio)
    - Get your Account SID, Auth Token, and a Twilio Phone Number
 
 ## Installation
+
+### Step 1: Clone and Install
 
 1. **Clone or download this repository**
 
@@ -59,20 +85,40 @@ Before you begin, ensure you have:
    npm install
    ```
 
-3. **Start the development server**
+### Step 2: Set Up Supabase
+
+Follow the detailed guide in **`SUPABASE_SETUP_GUIDE.md`**
+
+**Quick Steps:**
+1. Create a new Supabase project
+2. Get your Project URL and anon key
+3. Create `.env` file with your Supabase credentials
+4. Run the SQL schema from `SUPABASE_SETUP.sql`
+
+See **[SUPABASE_SETUP_GUIDE.md](SUPABASE_SETUP_GUIDE.md)** for complete instructions.
+
+### Step 3: Start the Application
+
+1. **Start the development server**
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
+2. **Open your browser**
    - The application will automatically open at `http://localhost:3000`
    - Or manually navigate to the URL shown in your terminal
+
+3. **Create your account**
+   - You'll see the signup page
+   - Enter your email and password (min 6 characters)
+   - Click Sign Up
+   - Log in with your credentials
 
 ## Initial Setup
 
 ### 1. Configure API Keys
 
-Navigate to **Settings** page and enter your API keys:
+After logging in, navigate to **Settings** page and enter your API keys:
 
 **AI Providers:**
 - Enter at least one AI provider API key

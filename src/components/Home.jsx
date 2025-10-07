@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Send, Upload, Trash2, AlertCircle } from 'lucide-react';
-import { getAgents, getApiKeys } from '../utils/storage';
+import { getAgents, getAgentById, getApiKeys } from '../utils/storage';
 import { processDocuments, validateFileType } from '../utils/documentProcessor';
 
 function Home({ onStartCampaign }) {
@@ -17,11 +17,20 @@ function Home({ onStartCampaign }) {
   });
 
   useEffect(() => {
-    setAgents(getAgents());
+    const loadAgents = async () => {
+      console.log('🔄 Loading agents...');
+      const agentsList = await getAgents();
+      console.log('✅ Agents loaded:', agentsList.length, 'agents found');
+      console.log('📋 Agent list:', agentsList);
+      setAgents(agentsList);
+    };
+    loadAgents();
   }, []);
 
-  const handleLoadAgent = (agentId) => {
+  const handleLoadAgent = async (agentId) => {
     setSelectedAgentId(agentId);
+    console.log('Loading agent:', agentId);
+    
     if (!agentId) {
       setFormData({
         provider: 'groq',
@@ -35,9 +44,11 @@ function Home({ onStartCampaign }) {
       return;
     }
 
-    const agent = agents.find(a => a.id === agentId);
+    const agent = await getAgentById(agentId);
+    console.log('Agent loaded:', agent);
+    
     if (agent) {
-      setFormData({
+      const newFormData = {
         provider: agent.provider,
         model: agent.model,
         messagePrompt: agent.messagePrompt,
@@ -45,7 +56,12 @@ function Home({ onStartCampaign }) {
         documents: agent.documents || [],
         language: formData.language,
         phoneNumbers: formData.phoneNumbers
-      });
+      };
+      console.log('Setting form data:', newFormData);
+      setFormData(newFormData);
+    } else {
+      console.error('Agent not found:', agentId);
+      alert('Could not load agent. Please try again.');
     }
   };
 
@@ -69,7 +85,7 @@ function Home({ onStartCampaign }) {
     setFormData({ ...formData, documents: newDocs });
   };
 
-  const handleStartCampaign = () => {
+  const handleStartCampaign = async () => {
     // Validate required fields
     if (!formData.model || !formData.messagePrompt || !formData.phoneNumbers.trim()) {
       alert('Please fill in all required fields');
@@ -77,7 +93,7 @@ function Home({ onStartCampaign }) {
     }
 
     // Validate API keys
-    const apiKeys = getApiKeys();
+    const apiKeys = await getApiKeys();
     const providerKey = formData.provider === 'ollama' 
       ? apiKeys.ollama.baseUrl 
       : apiKeys[formData.provider];
